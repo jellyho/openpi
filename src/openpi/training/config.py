@@ -556,6 +556,49 @@ class TrainConfig:
             raise ValueError("Cannot resume and overwrite at the same time.")
 
 
+def _pi05_droid_finetune(name: str, repo_id: str) -> "TrainConfig":
+    """Base config for fine-tuning pi05_droid on a jellyho DROID LeRobot dataset."""
+    return TrainConfig(
+        name=name,
+        model=pi0_config.Pi0Config(
+            pi05=True,
+            action_dim=32,
+            action_horizon=16,
+        ),
+        data=SimpleDataConfig(
+            repo_id=repo_id,
+            assets=AssetsConfig(
+                assets_dir="gs://openpi-assets/checkpoints/pi05_droid/assets",
+                asset_id="droid",
+            ),
+            base_config=DataConfig(
+                prompt_from_task=True,
+                action_sequence_keys=("action",),
+                repack_transforms=_transforms.Group(
+                    inputs=[
+                        _transforms.RepackTransform(
+                            {
+                                "observation/exterior_image_1_left": "observation.images.side_view_1_left",
+                                "observation/wrist_image_left": "observation.images.wrist_left",
+                                "observation/joint_position": "observation.state.joint_position",
+                                "observation/gripper_position": "observation.state.gripper_position",
+                                "actions": "action",
+                            }
+                        )
+                    ]
+                ),
+            ),
+            data_transforms=lambda model: _transforms.Group(
+                inputs=[droid_policy.DroidInputs(model_type=ModelType.PI05)],
+                outputs=[droid_policy.DroidOutputs()],
+            ),
+        ),
+        weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi05_droid/params"),
+        num_train_steps=20_000,
+        batch_size=32,
+    )
+
+
 # Use `get_config` if you need to get a config by name in your code.
 _CONFIGS = [
     #
@@ -916,6 +959,10 @@ _CONFIGS = [
         num_train_steps=20_000,
         batch_size=32,
     ),
+    *[_pi05_droid_finetune(name, repo_id) for name, repo_id in [
+        ("pi05_droid_finetune_pressing", "jellyho/droid_merged_skills_test_pressing"),
+        ("pi05_droid_finetune_picking", "jellyho/droid_merged_skills_picking"),
+    ]],
     #
     # ALOHA Sim configs. This config is used to demonstrate how to train on a simple simulated environment.
     #
