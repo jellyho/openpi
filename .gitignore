@@ -4,6 +4,16 @@ checkpoints/
 data/
 wandb/
 
+# IDE / editor settings.
+.vscode/
+.idea/
+
+# Virtual environments.
+.venv/
+
+# Claude Code session files.
+.claude/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
