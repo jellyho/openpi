@@ -583,6 +583,7 @@ def _pi05_droid_finetune(name: str, repo_id: str) -> "TrainConfig":
                                 "observation/joint_position": "observation.state.joint_position",
                                 "observation/gripper_position": "observation.state.gripper_position",
                                 "actions": "action",
+                                "prompt": "prompt"
                             }
                         )
                     ]
@@ -960,8 +961,13 @@ _CONFIGS = [
         batch_size=32,
     ),
     *[_pi05_droid_finetune(name, repo_id) for name, repo_id in [
-        ("pi05_droid_finetune_pressing", "jellyho/droid_merged_skills_test_pressing"),
+        ("pi05_droid_finetune_pressing", "jellyho/droid_merged_skills_pressing"),
         ("pi05_droid_finetune_picking", "jellyho/droid_merged_skills_picking"),
+        ("pi05_droid_finetune_placing", "jellyho/droid_merged_skills_placing"),
+        ("pi05_droid_finetune_stacking", "jellyho/droid_merged_skills_stacking"),
+        ("pi05_droid_finetune_scooping", "jellyho/droid_merged_skills_scooping"),
+        ("pi05_droid_finetune_wiping", "jellyho/droid_merged_skills_wiping"),
+        ("pi05_droid_finetune_moving", "jellyho/droid_merged_skills_moving"),
     ]],
     #
     # ALOHA Sim configs. This config is used to demonstrate how to train on a simple simulated environment.

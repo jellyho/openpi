@@ -8,6 +8,8 @@ wandb/
 .vscode/
 .idea/
 
+*.out
+
 # Virtual environments.
 .venv/
 
